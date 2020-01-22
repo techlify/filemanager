@@ -8,7 +8,7 @@ PRE-REQUISITE:
 
 USAGE STEPS:
 
-   composer require techlifyinc/filemanager-module
+   composer require techlify/filemanager-module
  
    Import the FileManger model required to the controller. (use Modules\FileManager\Entities\FileManager;)
 
