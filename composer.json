@@ -20,5 +20,8 @@
         "psr-4": {
             "Modules\\FileManager\\": ""
         }
+    },
+    "require": {
+        "intervention/image": "^2.5"
     }
 }
