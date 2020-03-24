@@ -5,12 +5,13 @@ namespace Modules\FileManager\Entities;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
+use Intervention\Image\Facades\Image;
 
 class FileManager
 {
     protected $fillable = [];
 
-    public static function upload($disk, $subPath)
+    public static function upload($disk, $subPath, $config = [])
     {
         $rawFile = \Request::file('fileData');
         $fileName = time() . "_" . $rawFile->getClientOriginalName();
@@ -21,8 +22,37 @@ class FileManager
 
         $fileUrl = $subPath . '/' . $fileName;
 
+        $file = '';
+
+        if (array_key_exists('resize', $config) &&  $config['resize']) {
+            $file = Image::make($rawFile); // resize =true
+            $size = intval(config('techlifyfile.image_resize', 1500));
+            if ($file->width() > $size) {
+                $file->widen($size);
+            }
+            if ($file->height() > $size) {
+                $file->heighten($size);
+            }
+        }
+
+        if (array_key_exists('watermark', $config) &&  $config['watermark']) {
+            if (empty($file)) {
+                $file = Image::make($rawFile);  //resize=false, watermark=true
+            }
+            $watermark_img = Image::make(config('techlifyfile.watermark_path'));
+            $watermark_img->widen(intval($file->width() / 2));
+            $watermark_img->opacity(50);
+            $file->insert($watermark_img, 'center', 10, 10);
+            $format = pathinfo($fileName, PATHINFO_EXTENSION);
+            $file->encode($format);
+        }
+
+        if (empty($file)) {
+            $file = File::get($rawFile);  //resize=false, watermark=false
+        }
+
         $result = Storage::disk($disk)
-            ->put($fileName, \Illuminate\Support\Facades\File::get($rawFile));
+            ->put($fileName, $file);
 
         if (!$result) {
             return response()->json(['error' => "Unable to upload file. "], Response::HTTP_UNPROCESSABLE_ENTITY);
