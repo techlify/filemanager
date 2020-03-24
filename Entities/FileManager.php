@@ -16,10 +16,6 @@ class FileManager
         $rawFile = \Request::file('fileData');
         $fileName = time() . "_" . $rawFile->getClientOriginalName();
 
-        if (!Storage::makeDirectory($subPath)) {
-            return response()->json(['error' => "Unable to create directory. "], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
         $fileUrl = $subPath . '/' . $fileName;
 
         $file = '';
