@@ -26,7 +26,7 @@ class FileManager
 
         if (array_key_exists('resize', $config) &&  $config['resize']) {
             $file = Image::make($rawFile); // resize =true
-            $size = intval(config('techlifyfile.image_resize', 1500));
+            $size = intval(config('filemanager.image_resize', 1500));
             if ($file->width() > $size) {
                 $file->widen($size);
             }
@@ -39,7 +39,7 @@ class FileManager
             if (empty($file)) {
                 $file = Image::make($rawFile);  //resize=false, watermark=true
             }
-            $watermark_img = Image::make(config('techlifyfile.watermark_path'));
+            $watermark_img = Image::make(config('filemanager.watermark_path'));
             $watermark_img->widen(intval($file->width() / 2));
             $watermark_img->opacity(50);
             $file->insert($watermark_img, 'center', 10, 10);

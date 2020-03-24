@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'name' => 'FileManager'
+    'name' => 'FileManager',
+    'watermark_path' => public_path('watermark.png'),
+    'image_resize' => 1500
 ];
