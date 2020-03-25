@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\File;
 
 class FileManager
 {
@@ -48,7 +49,7 @@ class FileManager
         }
 
         $result = Storage::disk($disk)
-            ->put($fileName, $file);
+            ->put($fileUrl, $file);
 
         if (!$result) {
             return response()->json(['error' => "Unable to upload file. "], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -66,7 +67,7 @@ class FileManager
     public static function delete($disk, $file)
     {
         try {
-            $deleted = Storage::delete($disk . $file);
+            $deleted = Storage::disk($disk)->delete($file);
             if (!$deleted) {
                 return response()->json(['errors' => 'Request cannot be processed'], Response::HTTP_BAD_REQUEST);
             }
